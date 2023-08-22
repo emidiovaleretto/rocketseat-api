@@ -70,12 +70,12 @@ class UsersController {
         name = (?), 
         email = (?), 
         password = (?),
-        updated_at = (?)
+        updated_at = DATETIME('now')
       WHERE id = (?)`,
-      [name, email, user.password, new Date(), id],
+      [name, email, user.password, id],
     )
 
-    return response.status(200).json({ message: 'User updated' })
+    return response.status(200).json({ message: 'User successfully updated' })
   }
 }
 
