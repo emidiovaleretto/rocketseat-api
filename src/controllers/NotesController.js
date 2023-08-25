@@ -1,4 +1,5 @@
 const knex = require('../database/knex')
+const AppError = require('../utils/AppError')
 
 class NotesController {
   async create(request, response) {
@@ -31,6 +32,26 @@ class NotesController {
     await knex('tags').insert(tagsInsert)
 
     return response.status(201).json({ message: 'Note created' })
+  }
+
+  async showNotes(request, response) {
+    const { id } = request.params
+
+    const notes = await knex('notes').where({ id }).first()
+    const tags = await knex('tags').where({ note_id: id }).orderBy('name')
+    const links = await knex('links')
+      .where({ note_id: id })
+      .orderBy('created_at')
+
+    if (!notes) {
+      throw new AppError('Note not found')
+    }
+
+    return response.json({
+      ...notes,
+      tags,
+      links,
+    })
   }
 }
 
