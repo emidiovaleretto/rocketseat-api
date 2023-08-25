@@ -34,7 +34,7 @@ class NotesController {
     return response.status(201).json({ message: 'Note created' })
   }
 
-  async showNotes(request, response) {
+  async show(request, response) {
     const { id } = request.params
 
     const notes = await knex('notes').where({ id }).first()
@@ -52,6 +52,20 @@ class NotesController {
       tags,
       links,
     })
+  }
+
+  async delete(request, response) {
+    const { id } = request.params
+
+    const note = await knex('notes').where({ id }).first()
+
+    if (!note) {
+      throw new AppError('Note not found')
+    }
+
+    await knex('notes').where({ id }).delete()
+
+    return response.json({ message: 'Note deleted' })
   }
 }
 
